@@ -8,7 +8,7 @@ def carregar_produtos():
 
 def salvar_produtos(produtos):
     arquivo = open("produtos.json", "w", encoding="utf-8")
-    json.dump(produtos, arquivo, indent=4, ebsure_ascii=False)
+    json.dump(produtos, arquivo, indent=4, ensure_ascii=False)
     arquivo.close()
 
 # Essa função é usada para mostrar um item individual da lista, 
@@ -51,12 +51,11 @@ def registrar_entrada():
                 produto = x
                 id_valido = 1
                 break
-        if id_valido = 1:
+        if id_valido == 1:
             mostrar_item(produto)
             opt = input("esse é o produto correto [S/N]: ")
 
             if opt.lower() in ["sim", "s"]:
-                print("AAAA")
                 break
             elif opt.lower() in ["não", "n", "nao"]:
                 print("tente novamente")
@@ -70,10 +69,18 @@ def registrar_entrada():
 
     mostrar_item(novo_valor)
 
-    
-    opt = input("Deseja comfirmar a operação")
-    if opt.lower() = ["sim", "s"]
-
+    while True:
+        opt = input("Deseja comfirmar a operação [S/N]: ")
+        if opt.lower() in ["sim", "s"]:
+            index = produtos.index(produto)
+            produtos[index] = novo_valor
+            salvar_produtos(produtos)
+            return 0
+        elif opt.lower() in ["não", "nao", "n"]:
+            print("operação cancelada")
+            return 0
+        else:
+            print("erro ao processar entrada")
 
 
 while True:

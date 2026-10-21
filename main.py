@@ -69,6 +69,8 @@ def registrar_entrada():
     novo_valor["estoque"] = produto["estoque"] + num
 
     mostrar_item(novo_valor)
+
+    
     opt = input("Deseja comfirmar a operação")
     if opt.lower() = ["sim", "s"]
 

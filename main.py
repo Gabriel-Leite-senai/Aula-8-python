@@ -13,7 +13,7 @@ def salvar_produtos(produtos):
 
 # Essa função é usada para mostrar um item individual da lista, 
 def mostrar_item(item):
-    print(f"id: {item["id"]} nome: {item["nome"]} preço: {item["preco"]} quantidade em estoque: {item["estoque"]}")
+    print(f"id: {item["id"]} nome: {item["nome"]} categoria: {item["categoria"]} preço: {item["preco"]} quantidade em estoque: {item["estoque"]}")
 
 # Essa função é usada para requisitar a entrada de uma float
 # caso a entrada seja qualquer coisa que não é uma float a função pede a entrada denovo até que a entrada seja uma float
@@ -43,7 +43,7 @@ def mostrar_produtos():
     input("aperter ENTER par continuar")
     print("")
 
-
+# procura item por nome
 def procurar_produto():
     nome = input("Qual o nome do produto: ")
     produtos = carregar_produtos()
@@ -105,8 +105,12 @@ def registrar_entrada():
 def registrar_saida():
     produtos = carregar_produtos()
     produto = procurar_id()
-
-    num = entrada_int("Quanto sera deduzido a o estoque: ")
+    while True:
+        num = entrada_int("Quanto sera deduzido a o estoque: ")
+        if num <= produto["estoque"]:
+            print("o numero a ser deduzido do estoque não pode ser maior que o numero em estoque")
+        else:
+            break
     novo_valor = dict(produto)
 
     novo_valor["estoque"] = (produto["estoque"] - num)
@@ -127,6 +131,57 @@ def registrar_saida():
         else:
             print("erro ao processar entrada")
 
+def selecionar_categoria():
+    while True:
+        print("1 - Armazenamento")
+        print("2 - Periféricos")
+        print("3 - Informatica")
+        print("4 - Redes")
+        print("5 - Outros")
+
+        opt = input("selecione a categoria do produto: ")
+        if opt == "1":
+            return "Armazenamento"
+        elif opt == "2":
+            return "Periféricos"
+        elif opt == "3":
+            return "Informatica"
+        elif opt == "4":
+            return "Redes"
+        elif opt == "5":
+            return "Outros"
+        else: 
+            print("opção invalida tente novamente")
+
+def registrar_novo_produto():
+    produtos = carregar_produtos()
+    nome = input("Digite o nome do produto a ser registrado: ")
+    preco = entrada_float("Digite o preço do produto: ")
+    estoque = entrada_int("Digite a quantidade em estoque: ")
+
+    categoria = selecionar_categoria()
+    
+    novo_id = 1
+    for x in produtos:
+        if x["id"] == novo_id:
+            novo_id +=1
+        else:
+            break
+
+    novo_item = {"id": novo_id, "nome": nome, "categoria": categoria, "preco": preco, "estoque":estoque}
+    mostrar_item(novo_item)
+    while True:
+        opt = input("Deseja comfirmar a operação[S/N]? ")
+        if opt.lower() in ["sim", "s"]:
+            produtos.append(novo_item)
+            salvar_produtos(produtos)
+            print("operação concluida")
+            return 0
+        elif opt.lower() in ["não", "n", "nao"]:
+            print("operação cancelada")
+            return 1
+        else:
+            print("Erro ao processar entrada, tente novamente")
 
 while True:
     print("1 - mostrar todos os produtos")
@@ -147,9 +202,9 @@ while True:
     elif opt=="3":
         registrar_entrada()
     elif opt=="4":
-        print(4)
+        registrar_saida()
     elif opt=="5":
-        print(5)
+        registrar_novo_produto()
     elif opt=="6":
         print(6)
     elif opt=="7":

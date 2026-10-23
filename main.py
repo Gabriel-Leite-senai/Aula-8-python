@@ -131,7 +131,7 @@ def registrar_saida():
         else:
             print("erro ao processar entrada")
 
-def selecionar_categoria():
+def selecionar_categoria(mensagen):
     while True:
         print("1 - Armazenamento")
         print("2 - Periféricos")
@@ -139,7 +139,7 @@ def selecionar_categoria():
         print("4 - Redes")
         print("5 - Outros")
 
-        opt = input("selecione a categoria do produto: ")
+        opt = input(mensagen)
         if opt == "1":
             return "Armazenamento"
         elif opt == "2":
@@ -159,7 +159,7 @@ def registrar_novo_produto():
     preco = entrada_float("Digite o preço do produto: ")
     estoque = entrada_int("Digite a quantidade em estoque: ")
 
-    categoria = selecionar_categoria()
+    categoria = selecionar_categoria("selecione a categoria do produto: ")
     
     novo_id = 1
     for x in produtos:
@@ -181,7 +181,48 @@ def registrar_novo_produto():
             print("operação cancelada")
             return 1
         else:
-            print("Erro ao processar entrada, tente novamente")
+            print("opção invalida")
+
+def alterar_produto():
+    produto = procurar_id()
+
+    while True:
+        print("1 - nome")
+        print("2 - categoria")
+        print("3 - preço")
+
+        opt = input("qual a caracteristica que deve ser alterada: ")
+        if opt == "1":
+            novo_valor = input("qual o sera o novo nome do produto: ")
+            c = "nome"
+            break
+        elif opt == "2":
+            novo_valor = selecionar_categoria("Qual o nova categoria do produto: ")
+            c = "categoria"
+            break
+        elif opt == "3":
+            novo_valor = input_float("qual sera o novo preço do produto: ")
+            c = "preco"
+            break
+        else:
+            print("opção invalida, tente novamente")
+    produto_alterado = dict(produto)
+    produto_alterado[c] = novo_valor
+    mostrar_item(produto_alterado)
+
+    produtos = carregar_produtos()
+    index = produtos.index(produto)
+    produtos[index] = dict(produto_alterado)
+
+    opt = input("Deseja comfirmar a operção[S/N]? ")
+    if opt.lower() in ["sim", "s"]:
+        salvar_produtos(produtos)
+        return 0
+    elif opt.lower() in ["não", "n", "nao"]:
+        print("operação cancelada")
+        return 1
+    else:
+        print("opção invalida")
 
 while True:
     print("1 - mostrar todos os produtos")
@@ -206,7 +247,7 @@ while True:
     elif opt=="5":
         registrar_novo_produto()
     elif opt=="6":
-        print(6)
+        alterar_produto()
     elif opt=="7":
         print(7)
     elif opt=="0":

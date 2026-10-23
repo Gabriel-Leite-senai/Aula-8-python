@@ -11,6 +11,18 @@ def salvar_produtos(produtos):
     json.dump(produtos, arquivo, indent=4, ensure_ascii=False)
     arquivo.close()
 
+def confirmar_operacao(produtos):
+    while True:
+        opt = input("Deseja comfirmar a operção[S/N]? ")
+        if opt.lower() in ["sim", "s"]:
+            salvar_produtos(produtos)
+            return 0
+        elif opt.lower() in ["não", "n", "nao"]:
+            print("operação cancelada")
+            return 1
+        else:
+            print("opção invalida")
+
 # Essa função é usada para mostrar um item individual da lista, 
 def mostrar_item(item):
     print(f"id: {item["id"]} nome: {item["nome"]} categoria: {item["categoria"]} preço: {item["preco"]} quantidade em estoque: {item["estoque"]}")
@@ -86,50 +98,29 @@ def registrar_entrada():
 
     novo_valor["estoque"] = (produto["estoque"] + num)
     mostrar_item(novo_valor)
+    index = produtos.index(produto)
+    produtos[index] = novo_valor
 
-    while True:
-        opt = input("Deseja comfirmar a operação [S/N]: ")
-        if opt.lower() in ["sim", "s"]:
-            index = produtos.index(produto)
-            produtos[index] = novo_valor
-            salvar_produtos(produtos)
-            return 0
-        
-        elif opt.lower() in ["não", "nao", "n"]:
-            print("operação cancelada")
-            return 1
-        
-        else:
-            print("erro ao processar entrada")
-
+    confirmar_operacao(produtos)
+    
 def registrar_saida():
     produtos = carregar_produtos()
     produto = procurar_id()
     while True:
         num = entrada_int("Quanto sera deduzido a o estoque: ")
         if num <= produto["estoque"]:
-            print("o numero a ser deduzido do estoque não pode ser maior que o numero em estoque")
-        else:
             break
+        else:
+            print("o numero a ser deduzido do estoque não pode ser maior que o numero em estoque")
+            
     novo_valor = dict(produto)
 
     novo_valor["estoque"] = (produto["estoque"] - num)
     mostrar_item(novo_valor)
+    index = produtos.index(produto)
+    produtos[index] = novo_valor
 
-    while True:
-        opt = input("Deseja comfirmar a operação [S/N]: ")
-        if opt.lower() in ["sim", "s"]:
-            index = produtos.index(produto)
-            produtos[index] = novo_valor
-            salvar_produtos(produtos)
-            return 0
-        
-        elif opt.lower() in ["não", "nao", "n"]:
-            print("operação cancelada")
-            return 1
-        
-        else:
-            print("erro ao processar entrada")
+    confirmar_operacao(produtos)
 
 def selecionar_categoria(mensagen):
     while True:
@@ -169,19 +160,10 @@ def registrar_novo_produto():
             break
 
     novo_item = {"id": novo_id, "nome": nome, "categoria": categoria, "preco": preco, "estoque":estoque}
+    produtos.append(novo_item)
     mostrar_item(novo_item)
-    while True:
-        opt = input("Deseja comfirmar a operação[S/N]? ")
-        if opt.lower() in ["sim", "s"]:
-            produtos.append(novo_item)
-            salvar_produtos(produtos)
-            print("operação concluida")
-            return 0
-        elif opt.lower() in ["não", "n", "nao"]:
-            print("operação cancelada")
-            return 1
-        else:
-            print("opção invalida")
+    
+    confirmar_operacao(produtos)
 
 def alterar_produto():
     produto = procurar_id()
@@ -201,7 +183,7 @@ def alterar_produto():
             c = "categoria"
             break
         elif opt == "3":
-            novo_valor = input_float("qual sera o novo preço do produto: ")
+            novo_valor = entrada_float("qual sera o novo preço do produto: ")
             c = "preco"
             break
         else:
@@ -214,15 +196,15 @@ def alterar_produto():
     index = produtos.index(produto)
     produtos[index] = dict(produto_alterado)
 
-    opt = input("Deseja comfirmar a operção[S/N]? ")
-    if opt.lower() in ["sim", "s"]:
-        salvar_produtos(produtos)
-        return 0
-    elif opt.lower() in ["não", "n", "nao"]:
-        print("operação cancelada")
-        return 1
-    else:
-        print("opção invalida")
+    confirmar_operacao(produtos)
+
+def remover_produto():
+    produto = procurar_id()
+    produtos = carregar_produtos()
+
+    produtos.remove(produto)
+    confirmar_operacao(produtos)
+
 
 while True:
     print("1 - mostrar todos os produtos")
@@ -249,7 +231,7 @@ while True:
     elif opt=="6":
         alterar_produto()
     elif opt=="7":
-        print(7)
+        remover_produto()
     elif opt=="0":
         exit()
     else:

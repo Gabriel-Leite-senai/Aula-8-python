@@ -75,12 +75,5 @@
         "categoria": "Informatica",
         "preco": 100.0,
         "estoque": 50
-    },
-    {
-        "id": 12,
-        "nome": "Makita Gamer",
-        "categoria": "Redes",
-        "preco": 2000.0,
-        "estoque": 2
     }
 ]

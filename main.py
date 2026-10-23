@@ -15,7 +15,9 @@ def salvar_produtos(produtos):
 def mostrar_item(item):
     print(f"id: {item["id"]} nome: {item["nome"]} preço: {item["preco"]} quantidade em estoque: {item["estoque"]}")
 
-def entrada_num(mensagem):
+# Essa função é usada para requisitar a entrada de uma float
+# caso a entrada seja qualquer coisa que não é uma float a função pede a entrada denovo até que a entrada seja uma float
+def entrada_float(mensagem):
     while True:
         try:
             numero = input(mensagem)
@@ -23,6 +25,16 @@ def entrada_num(mensagem):
         except ValueError:
             print("erro ao processar entrada, tente novamente")
 
+# Faz a mesma coisa que entrada_float() mas pede por uma int
+def entrada_int(mensagem):
+    while True:
+        try:
+            numero = input(mensagem)
+            return int(numero)
+        except ValueError:
+            print("erro ao processar entrada, tente novamente")
+
+# mostra todos os produtos
 def mostrar_produtos():
     produtos = carregar_produtos()
     for x in produtos:
@@ -30,6 +42,7 @@ def mostrar_produtos():
     print("")
     input("aperter ENTER par continuar")
     print("")
+
 
 def procurar_produto():
     nome = input("Qual o nome do produto: ")
@@ -41,10 +54,11 @@ def procurar_produto():
     input("aperte ENTER para continuar")
     print("")
 
-def registrar_entrada():
+# usada por outras funções para procurar um produto usando o id
+def procurar_id():
     produtos = carregar_produtos()
     while True:
-        produto_id = entrada_num("digite o id do produto: ")
+        produto_id = entrada_int("digite o id do produto: ")
         id_valido = 0
         for x in produtos:
             if x["id"] == produto_id:
@@ -56,17 +70,21 @@ def registrar_entrada():
             opt = input("esse é o produto correto [S/N]: ")
 
             if opt.lower() in ["sim", "s"]:
+                return produto
                 break
             elif opt.lower() in ["não", "n", "nao"]:
                 print("tente novamente")
         else:
             print("id invalido tente novamente")
 
-    num = entrada_num("Quanto sera adiconado a o estoque: ")
-    novo_valor = produto
+def registrar_entrada():
+    produtos = carregar_produtos()
+    produto = procurar_id()
 
-    novo_valor["estoque"] = produto["estoque"] + num
+    num = entrada_int("Quanto sera adiconado a o estoque: ")
+    novo_valor = dict(produto)
 
+    novo_valor["estoque"] = (produto["estoque"] + num)
     mostrar_item(novo_valor)
 
     while True:
@@ -76,9 +94,36 @@ def registrar_entrada():
             produtos[index] = novo_valor
             salvar_produtos(produtos)
             return 0
+        
         elif opt.lower() in ["não", "nao", "n"]:
             print("operação cancelada")
+            return 1
+        
+        else:
+            print("erro ao processar entrada")
+
+def registrar_saida():
+    produtos = carregar_produtos()
+    produto = procurar_id()
+
+    num = entrada_int("Quanto sera deduzido a o estoque: ")
+    novo_valor = dict(produto)
+
+    novo_valor["estoque"] = (produto["estoque"] - num)
+    mostrar_item(novo_valor)
+
+    while True:
+        opt = input("Deseja comfirmar a operação [S/N]: ")
+        if opt.lower() in ["sim", "s"]:
+            index = produtos.index(produto)
+            produtos[index] = novo_valor
+            salvar_produtos(produtos)
             return 0
+        
+        elif opt.lower() in ["não", "nao", "n"]:
+            print("operação cancelada")
+            return 1
+        
         else:
             print("erro ao processar entrada")
 
